@@ -58,7 +58,7 @@ if (!hasInitializedRef.current) {
 } else {
   previousMessageCountRef.current = newCount;
 }
-
+}
   useEffect(() => {
     loadAll();
     const interval = setInterval(loadAll, 4000);
@@ -138,7 +138,7 @@ if (!hasInitializedRef.current) {
     if (att.file_type && att.file_type.startsWith("video/")) {
       return <div className="message-media"><video src={att.file_url} controls /></div>;
     }
-    return <div style={{ marginTop: 10 }}><a href={att.file_url} target="_blank">Open {att.file_name || "file"}</a></div>;
+    return <div style={{ marginTop: 10 }}><a href={att.file_url} target="_blank" rel="noreferrer">Open {att.file_name || "file"}</a></div>;
   }
 
   return (
