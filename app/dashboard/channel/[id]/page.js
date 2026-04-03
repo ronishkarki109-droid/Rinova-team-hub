@@ -166,8 +166,17 @@ export default function ChannelPage() {
               )}
             </div>
 
-            <form onSubmit={handleSend} className="composer">
-              <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="Write your message..." />
+           <textarea
+  value={text}
+  onChange={(e) => setText(e.target.value)}
+  placeholder="Write your message..."
+  onKeyDown={(e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend(e);
+    }
+  }}
+/>
               <div className="row">
                 <input type="file" onChange={(e) => setFile(e.target.files?.[0] || null)} />
                 <button className="btn" disabled={sending}>{sending ? "Sending..." : "Send"}</button>
