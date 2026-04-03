@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import AuthGuard from "@/components/AuthGuard";
@@ -20,7 +20,9 @@ export default function ChannelPage() {
   const [file, setFile] = useState(null);
   const [sending, setSending] = useState(false);
   const [notice, setNotice] = useState("");
-
+const previousMessageCountRef = useRef(0);
+const hasInitializedRef = useRef(false);
+const audioRef = useRef(null);
   async function loadAll() {
     const { data: userData } = await supabase.auth.getUser();
     const user = userData?.user;
@@ -36,8 +38,26 @@ export default function ChannelPage() {
     setChannels(allChannels || []);
     setChannel(oneChannel || null);
     setProfile(prof || null);
-    setMessages(msgs || []);
+    const newMessages = msgs || [];
+
+setMessages(newMessages);
+
+const newCount = newMessages.length;
+
+if (!hasInitializedRef.current) {
+  previousMessageCountRef.current = newCount;
+  hasInitializedRef.current = true;
+} else if (newCount > previousMessageCountRef.current) {
+  const latestMessage = newMessages[newMessages.length - 1];
+
+  if (latestMessage?.user_id !== user.id) {
+    audioRef.current?.play().catch(() => {});
   }
+
+  previousMessageCountRef.current = newCount;
+} else {
+  previousMessageCountRef.current = newCount;
+}
 
   useEffect(() => {
     loadAll();
@@ -146,6 +166,7 @@ export default function ChannelPage() {
           </aside>
 
           <main className="chat">
+            <audio ref={audioRef} src="/notification.mp3" preload="auto" />
             <div className="row" style={{ justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
               <span className="badge">{channel?.description || "Team discussion"}</span>
               <input
