@@ -176,13 +176,13 @@ export default function ChannelPage() {
     value={text}
     onChange={(e) => setText(e.target.value)}
     placeholder="Write your message..."
-    onKeyDown={(e) => {
+   onKeyDown={(e) => {
   if (e.key === "Enter" && !e.shiftKey) {
     e.preventDefault();
-    handleSend(e);
+    e.currentTarget.form?.requestSubmit();
   }
 }}
-  />
+/>
   
   <div className="row">
     <input type="file" onChange={(e) => setFile(e.target.files?.[0] || null)} />
