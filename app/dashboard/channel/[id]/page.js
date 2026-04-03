@@ -51,10 +51,16 @@ export default function ChannelPage() {
     return messages.filter((m) => (m.text || "").toLowerCase().includes(q));
   }, [messages, search]);
 
-  async function handleSend(e) {
-    e.preventDefault();
-    setSending(true);
-    setNotice("");
+ async function handleSend(e) {
+  e?.preventDefault();   // ✅ change this
+  setSending(true);
+  setNotice("");
+
+  // ✅ ADD THIS BLOCK HERE
+  if (!text.trim() && !file) {
+    setSending(false);
+    return;
+  }
 
     const { data: userData } = await supabase.auth.getUser();
     const user = userData?.user;
@@ -171,11 +177,11 @@ export default function ChannelPage() {
     onChange={(e) => setText(e.target.value)}
     placeholder="Write your message..."
     onKeyDown={(e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        e?.preventDefault();
-      }
-    }}
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    handleSend(e);
+  }
+}}
   />
   
   <div className="row">
